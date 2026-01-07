@@ -1,0 +1,384 @@
+Here is the updated single HTML file.
+
+I have extracted all the details from your resume (Education, Experience, Projects, Skills, Contact) and integrated them
+into the commands. I also updated the `help` command to list these new additions.
+
+Save this as `portfolio.html` and open it in your browser.
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ahasas Singh - Web Developer</title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Google Font: VT323 -->
+    <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
+
+    <!-- Babel for JSX -->
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+    <style>
+        /* --- CRT STYLES --- */
+        :root {
+            --terminal-bg: #0d1117;
+            --terminal-glow: #00ff41;
+            /* Default Green */
+            --terminal-dim: #008F11;
+            --scanline-color: rgba(18, 16, 16, 0.5);
+        }
+
+        body {
+            margin: 0;
+            background-color: #000;
+            color: var(--terminal-glow);
+            font-family: 'VT323', monospace;
+            overflow: hidden;
+        }
+
+        .crt-container {
+            position: relative;
+            width: 100vw;
+            height: 100vh;
+            background-color: var(--terminal-bg);
+            box-shadow: inset 0 0 100px rgba(0, 0, 0, 0.9);
+        }
+
+        .text-glow {
+            text-shadow: 0 0 5px var(--terminal-glow), 0 0 10px var(--terminal-glow);
+        }
+
+        .text-dim {
+            color: var(--terminal-dim);
+            text-shadow: none;
+        }
+
+        a {
+            color: var(--terminal-glow);
+            text-decoration: underline;
+            cursor: pointer;
+        }
+
+        a:hover {
+            background-color: var(--terminal-glow);
+            color: var(--terminal-bg);
+        }
+
+        .scanlines {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(to bottom, rgba(255, 255, 255, 0), rgba(255, 255, 255, 0) 50%, rgba(0, 0, 0, 0.2) 50%, rgba(0, 0, 0, 0.2));
+            background-size: 100% 4px;
+            pointer-events: none;
+            z-index: 10;
+        }
+
+        @keyframes flicker {
+            0% {
+                opacity: 0.97;
+            }
+
+            5% {
+                opacity: 0.95;
+            }
+
+            10% {
+                opacity: 0.9;
+            }
+
+            15% {
+                opacity: 0.95;
+            }
+
+            20% {
+                opacity: 0.99;
+            }
+
+            100% {
+                opacity: 0.95;
+            }
+        }
+
+        .crt-flicker {
+            animation: flicker 0.15s infinite;
+        }
+
+        @keyframes blink {
+
+            0%,
+            100% {
+                opacity: 1;
+                background-color: var(--terminal-glow);
+            }
+
+            50% {
+                opacity: 0;
+                background-color: var(--terminal-glow);
+            }
+        }
+
+        .cursor-block {
+            display: inline-block;
+            width: 0.6em;
+            height: 1.2em;
+            background-color: var(--terminal-glow);
+            vertical-align: text-bottom;
+            animation: blink 1s step-end infinite;
+        }
+    </style>
+
+    <!-- Import Map for React -->
+    <script type="importmap">
+        {
+            "imports": {
+                "react": "https://esm.sh/react@18.2.0",
+                "react-dom/client": "https://esm.sh/react-dom@18.2.0/client"
+            }
+        }
+    </script>
+</head>
+
+<body>
+
+    <div id="root"></div>
+
+    <!-- REACT APP CODE -->
+    <script type="text/babel" data-type="module">
+        import React, { useState, useRef, useEffect } from 'react';
+        import { createRoot } from 'react-dom/client';
+
+        // --- HOOK: useTerminalLogic ---
+        const useTerminalLogic = () => {
+            const [history, setHistory] = useState([
+                { type: 'output', content: 'INITIALIZING SYSTEM...' },
+                { type: 'output', content: 'LOADING USER PROFILE: AHASAS SINGH...' },
+                { type: 'output', content: 'CONNECTING TO MAINFRAME... [OK]' },
+                { type: 'output', content: 'WELCOME, USER.' },
+                { type: 'output', content: 'Type "help" to see available commands.' }
+            ]);
+            const [input, setInput] = useState('');
+            const [theme, setTheme] = useState('green'); // 'green' or 'amber'
+            const inputRef = useRef(null);
+
+            // Command Definitions (Updated with Resume Data)
+            const commands = {
+                help: () => (
+                    <div className="flex flex-col gap-1">
+                        <span>AVAILABLE COMMANDS:</span>
+                        <span>  > help       : List commands</span>
+                        <span>  > about      : View bio & principle</span>
+                        <span>  > experience : View work history</span>
+                        <span>  > education  : View academic background</span>
+                        <span>  > skills     : View technical skills</span>
+                        <span>  > projects   : View project links</span>
+                        <span>  > certs      : View certifications</span>
+                        <span>  > contact    : View contact info</span>
+                        <span>  > date       : Show current system time</span>
+                        <span>  > theme      : Toggle screen color (Green/Amber)</span>
+                        <span>  > clear      : Clear terminal</span>
+                    </div>
+                ),
+                // --- COMBINED BIO (Resume) ---
+                about: () => (
+                    <div className="flex flex-col gap-2">
+                        <p>> IDENTITY: <strong>Ahasas Singh</strong></p>
+                        <p>> ROLE: Web Developer & Student</p>
+                        <br />
+                        <p>I am a passionate Web Developer currently pursuing a Bachelors of Technology in Computer Science at Symbiosis Institute of Technology.</p>
+                        <p>I explore AI and its capabilities to build innovative projects. My next goal is to build full-stack applications using AI and earn money through it.</p>
+                        <br />
+                        <p className="text-glow font-bold tracking-widest border-t border-b border-green-800 py-1">
+                            PRINCIPLE: DO SMART WORK, NOT HARDWORK.
+                        </p>
+                    </div>
+                ),
+                // --- RESUME: EXPERIENCE ---
+                experience: () => (
+                    <div className="flex flex-col gap-2">
+                        <span className="text-glow font-bold">> WORK EXPERIENCE</span>
+                        <div className="pl-4 border-l-2 border-green-900">
+                            <p className="text-xl text-white"><strong>Fiverr</strong> <span className="text-gray-400">| Video Editor (Freelancer)</span></p>
+                            <p className="text-gray-300 mt-1">
+                                Responsible for editing and enhancing video content with clean cuts, smooth transitions, and engaging visuals. Skilled in organizing footage, adding effects, and maintaining visual consistency to deliver high-quality videos.
+                            </p>
+                        </div>
+                    </div>
+                ),
+                // --- RESUME: EDUCATION ---
+                education: () => (
+                    <div className="flex flex-col gap-2">
+                        <span className="text-glow font-bold">> EDUCATION</span>
+
+                        <div className="pl-4 border-l-2 border-green-900">
+                            <p className="text-xl text-white"><strong>B.Tech CSE</strong>(GPA: 7.37)</p>
+                            <p>Symbiosis Institute of Technology, Lavale, Pune</p>
+                        </div>
+
+                        <div className="pl-4 border-l-2 border-green-900">
+                            <p className="text-xl text-white"><strong>Class 12th</strong> (GPA: 7.76)</p>
+                            <p>Gayatri English Medium School, Moshi, Pune</p>
+                        </div>
+
+                        <div className="pl-4 border-l-2 border-green-900">
+                            <p className="text-xl text-white"><strong>Class 10th</strong> (GPA: 8.56)</p>
+                            <p>Podar International School, Chakan, Pune</p>
+                        </div>
+
+                    </div>
+                ),
+                // --- RESUME: SKILLS ---
+                skills: () => (
+                    <div className="grid grid-cols-2 gap-x-8 gap-y-2">
+                        <span>> JavaScript</span>
+                        <span>> HTML & CSS</span>
+                        <span>> Python</span>
+                        <span>> C / C++</span>
+                        <span>> Video Editing</span>
+                        <span>> Football (Hobby)</span>
+                    </div>
+                ),
+                // --- RESUME: PROJECTS ---
+                projects: () => (
+                    <div className="flex flex-col gap-2">
+                        <span className="text-glow font-bold">> PROJECTS</span>
+                        <span>[1] <strong>Rock Paper Scissors Game</strong></span>
+                        <span className="text-gray-400 pl-4">A beginner-friendly web game using DOM manipulation and JS logic.</span>
+
+                        <span>[2] <strong>Simple Calculator</strong></span>
+                        <span className="text-gray-400 pl-4">Web app performing arithmetic operations with clean UI structure.</span>
+
+                        <span>[3] <strong>Personal Portfolio Website</strong></span>
+                        <span className="text-gray-400 pl-4">Fully responsive site using HTML, CSS, JS, and animated backgrounds.</span>
+                    </div>
+                ),
+                // --- RESUME: CERTIFICATIONS ---
+                certs: () => (
+                    <div className="flex flex-col gap-1">
+                        <span className="text-glow font-bold">> CERTIFICATIONS</span>
+                        <span>> Cybersecurity (Craw Cybersecurity)</span>
+                        <span>> IIT Bombay Techfest (Participant)</span>
+                    </div>
+                ),
+                // --- CONTACT (Resume Info + Social Links) ---
+                contact: () => (
+                    <div className="flex flex-col gap-2">
+                        <span className="text-glow font-bold">> CONTACT INFO</span>
+                        <span>Email: <a href="mailto:singhahasas94@gmail.com">singhahasas94@gmail.com</a></span>
+                        <span>Phone: 7709805086</span>
+                        <br />
+                        <span>GitHub: <a href="https://github.com/ahasassingh" target="_blank">github.com/ahasassingh</a></span>
+                        <span>LinkedIn: <a href="https://www.linkedin.com/in/ahasas-singh-4b544337b/" target="_blank">linkedin.com/in/ahasas-singh-4b544337b</a></span>
+                    </div>
+                ),
+                // --- BONUS COMMANDS ---
+                date: () => (
+                    <span>Current System Time: {new Date().toLocaleString()}</span>
+                ),
+                theme: () => {
+                    const newTheme = theme === 'green' ? 'amber' : 'green';
+                    const colorCode = newTheme === 'green' ? '#00ff41' : '#ffb000';
+                    setTheme(newTheme);
+                    document.documentElement.style.setProperty('--terminal-glow', colorCode);
+                    return <span>Theme switched to {newTheme.toUpperCase()}.</span>;
+                },
+                sudo: () => (
+                    <span className="text-red-500 text-glow">PERMISSION DENIED: You are not an admin.</span>
+                ),
+            };
+
+            const handleInputChange = (e) => setInput(e.target.value);
+
+            const handleKeyDown = (e) => {
+                if (e.key === 'Enter') {
+                    const trimmed = input.trim();
+                    setHistory(prev => [...prev, { type: 'input', content: trimmed }]);
+                    if (trimmed) {
+                        const cmd = trimmed.toLowerCase();
+                        if (cmd === 'clear') setHistory([]);
+                        else if (commands[cmd]) setHistory(prev => [...prev, { type: 'output', content: commands[cmd]() }]);
+                        else setHistory(prev => [...prev, { type: 'output', content: `Command not found: ${trimmed}` }]);
+                    }
+                    setInput('');
+                }
+            };
+
+            useEffect(() => { inputRef.current?.focus(); }, [history]);
+
+            return { history, input, handleInputChange, handleKeyDown, inputRef };
+        };
+
+        // --- COMPONENT: TerminalOutput ---
+        const TerminalOutput = ({ history }) => (
+            <div className="flex flex-col gap-1 mb-4 text-xl md:text-2xl">
+                {history.map((line, i) => (
+                    <div key={i} className="break-words">
+                        {line.type === 'input' ? (
+                            <div><span className="text-blue-400 mr-2">➜</span><span className="text-glow">{line.content}</span></div>
+                        ) : (
+                            <div className="text-gray-300 pl-4 opacity-90">{line.content}</div>
+                        )}
+                    </div>
+                ))}
+            </div>
+        );
+
+        // --- COMPONENT: TerminalInput ---
+        const TerminalInput = ({ input, onChange, onKeyDown, inputRef }) => (
+            <div className="flex items-center text-xl md:text-2xl w-full">
+                <span className="text-blue-400 mr-2">➜</span>
+                <div className="relative flex-grow flex items-center">
+                    <input ref={inputRef} type="text" value={input} onChange={onChange} onKeyDown={onKeyDown}
+                        className="absolute inset-0 w-full opacity-0 cursor-default z-10" autoComplete="off" autoFocus />
+                    <div className="flex items-center text-glow whitespace-pre overflow-hidden">
+                        <span>{input}</span>
+                        <span className="cursor-block"></span>
+                    </div>
+                </div>
+            </div>
+        );
+
+        // --- COMPONENT: Terminal (Wrapper) ---
+        const Terminal = () => {
+            const { history, input, handleInputChange, handleKeyDown, inputRef } = useTerminalLogic();
+            const messagesEndRef = useRef(null);
+
+            useEffect(() => {
+                messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+            }, [history]);
+
+            return (
+                <div className="w-full h-full p-4 md:p-8 flex flex-col justify-end crt-container crt-flicker">
+                    <div className="scanlines"></div>
+                    <div className="relative z-10 flex flex-col h-full max-w-4xl mx-auto w-full">
+                        <div className="flex-grow overflow-y-auto mb-4 pr-2">
+                            <TerminalOutput history={history} />
+                            <div ref={messagesEndRef} />
+                        </div>
+                        <TerminalInput input={input} onChange={handleInputChange} onKeyDown={handleKeyDown} inputRef={inputRef} />
+                    </div>
+                </div>
+            );
+        };
+
+        // --- APP ---
+        const App = () => (
+            <div className="bg-black min-h-screen flex items-center justify-center">
+                <Terminal />
+            </div>
+        );
+
+        const root = createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+</body>
+
+</html>
+```
